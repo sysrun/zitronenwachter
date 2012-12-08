@@ -3,6 +3,7 @@
 // 2010-03-18 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
 
 #include <JeeLib.h>
+#define DEBUG true
     
 Port sensor1 (3);
 MilliTimer report;
@@ -17,15 +18,19 @@ struct {
 ISR(WDT_vect) { Sleepy::watchdogEvent(); }
 
 void setup () {
+    #if DEBUG
     Serial.begin(57600);
     Serial.println("\n[jeenode_feuchte]");
+    #endif
     rf12_initialize(11, RF12_868MHZ, 212);
 }
 int wert1;
 void loop () {
   wert1 = sensor1.anaRead();
   if (report.poll(1000)) {
-    Serial.println(wert1);
+    #if DEBUG
+      Serial.println(wert1);
+    #endif
     payload.sensor1 = wert1;
     payload.sensor2 = wert1;
     payload.lobat = rf12_lowbat();
