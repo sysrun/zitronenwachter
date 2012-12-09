@@ -3,11 +3,12 @@
 // 2010-03-18 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
 
 #include <JeeLib.h>
-//#define DEBUG false
+#define DEBUG true
 #define NODEID 11
 #define GROUP 212
 Port sensor1 (3);
 DHTxx dht (4); // PORT1,D
+BlinkPlug buttons (4);
 
 MilliTimer report;
 MilliTimer dhtRead;
@@ -29,22 +30,33 @@ void setup () {
     Serial.println("\n[jeenode_feuchte]");
     #endif
     rf12_initialize(NODEID, RF12_868MHZ, GROUP);
+    buttons.ledOn(1);
+    delay(400);
+    buttons.ledOn(2);
+    delay(400);
+    buttons.ledOff(1+2);
+
 }
 int wert1;
 int t,h;
+
 void loop () {
   wert1 = sensor1.anaRead();
   
   // Read DHT11 Sensor
-  if (dhtRead.poll(60000 || t == 0)) {
+  if (dhtRead.poll(5000) || t == 0) {
     if (dht.reading(t, h)) {
       payload.temp = t;
       payload.humi = h;
+      buttons.ledOn(1);
+      delay(50);
+      buttons.ledOff(1);
     }
   }
   
   // Send Payload
-  if (report.poll(30000)) {
+  if (report.poll(10000)) {
+    buttons.ledOn(2);
     #if DEBUG
       Serial.print(wert1);
       Serial.print(" - T:");
@@ -64,5 +76,6 @@ void loop () {
     rf12_sendStart(0, &payload, sizeof payload);
     delay(10);
     rf12_sleep(RF12_SLEEP);
+    buttons.ledOff(2);
   }
 }
