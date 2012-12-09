@@ -3,7 +3,7 @@
 // 2010-03-18 <jc@wippler.nl> http://opensource.org/licenses/mit-license.php
 
 #include <JeeLib.h>
-#define DEBUG true
+//#define DEBUG false
 #define NODEID 11
 #define GROUP 212
 Port sensor1 (3);
@@ -36,7 +36,7 @@ void loop () {
   wert1 = sensor1.anaRead();
   
   // Read DHT11 Sensor
-  if (dhtRead.poll(1200)) {
+  if (dhtRead.poll(60000 || t == 0)) {
     if (dht.reading(t, h)) {
       payload.temp = t;
       payload.humi = h;
@@ -44,7 +44,7 @@ void loop () {
   }
   
   // Send Payload
-  if (report.poll(1000)) {
+  if (report.poll(30000)) {
     #if DEBUG
       Serial.print(wert1);
       Serial.print(" - T:");
