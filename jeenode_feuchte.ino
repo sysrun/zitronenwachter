@@ -58,12 +58,11 @@ void loop () {
     payload.sensor2 = wert1;
     payload.lobat = rf12_lowbat();
 
-    //rf12_sleep(RF12_WAKEUP);
-    
+    rf12_sleep(RF12_WAKEUP);
     while (!rf12_canSend())
       rf12_recvDone();
     rf12_sendStart(0, &payload, sizeof payload);
     delay(10);
-    //rf12_sleep(RF12_SLEEP);
+    rf12_sleep(RF12_SLEEP);
   }
 }
